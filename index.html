@@ -231,7 +231,7 @@ document.getElementById('send').addEventListener('click',function(){
 var el=document.getElementById('nm'),n=el.value.trim();
 if(!n){el.focus();return;}
 var r=document.querySelector('input[name=r]:checked').value,u,web=!!CFG.form;
-if(CFG.script){var b=document.getElementById('send'),rn=document.getElementById('rn');b.disabled=true;fetch(CFG.script,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({name:n,answer:r})}).then(function(){rn.textContent='Salamat po! Natanggap na namin ang inyong sagot. 💛';rn.hidden=false;}).catch(function(){b.disabled=false;rn.textContent='May problema sa pagpapadala. Pakisubukan ulit.';rn.hidden=false;});return;}
+if(CFG.script){var b=document.getElementById('send'),rn=document.getElementById('rn');b.disabled=true;fetch(CFG.script,{method:'POST',mode:'no-cors',body:new URLSearchParams({name:n,answer:r})}).then(function(){rn.textContent='Salamat po! Natanggap na namin ang inyong sagot. 💛';rn.hidden=false;}).catch(function(){b.disabled=false;rn.textContent='May problema sa pagpapadala. Pakisubukan ulit.';rn.hidden=false;});return;}.then(function(){rn.textContent='Salamat po! Natanggap na namin ang inyong sagot. 💛';rn.hidden=false;}).catch(function(){b.disabled=false;rn.textContent='May problema sa pagpapadala. Pakisubukan ulit.';rn.hidden=false;});return;}
 if(web){u='https://docs.google.com/forms/d/e/'+CFG.form+'/viewform?usp=pp_url&entry.'+CFG.name+'='+encodeURIComponent(n)+'&entry.'+CFG.ans+'='+encodeURIComponent(r);document.getElementById('rn').hidden=false;}
 else{u='sms:'+CFG.sms+'?&body='+encodeURIComponent('Kylisha’s 1st Birthday – Sagot: '+n+' – '+r);}
 var l=document.createElement('a');l.href=u;if(web){l.target='_blank';l.rel='noopener';}

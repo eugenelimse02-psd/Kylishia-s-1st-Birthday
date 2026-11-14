@@ -147,6 +147,15 @@ header h1{color:#8b0000}
 html.intro .mute{display:none}
 .lead{font-weight:700;color:#2b1608;font-size:clamp(1.25rem,5.6vw,1.65rem);line-height:1.35;max-width:520px}
 footer{font-weight:700;color:#2b1608;font-size:clamp(1.15rem,5vw,1.5rem);line-height:1.35}
+.pop{position:fixed;inset:0;background:rgba(0,0,0,.45);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9999;animation:pfade .2s ease}
+.pop[hidden]{display:none}
+.popbox{background:#fff;color:#222;border-radius:20px;padding:28px 24px 22px;max-width:340px;width:100%;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.35);animation:ppop .45s cubic-bezier(.34,1.56,.64,1)}
+.popchk{width:68px;height:68px;margin:0 auto 12px;border-radius:50%;background:#2e7d4f;color:#fff;display:grid;place-items:center;font-size:2.2rem;font-weight:700;animation:ppop .6s .1s cubic-bezier(.34,1.56,.64,1) both}
+.popbox h3{margin:0 0 6px;font-size:1.5rem;color:#222}
+.popbox p{margin:0 0 4px;color:#555;font-weight:500}
+.popbox .btn{margin-top:16px}
+@keyframes pfade{from{opacity:0}to{opacity:1}}
+@keyframes ppop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
 </style>
 </head>
 <body>
@@ -196,7 +205,7 @@ footer{font-weight:700;color:#2b1608;font-size:clamp(1.15rem,5vw,1.5rem);line-he
 <label><input type="radio" name="r" value="Oo" checked>Oo</label>
 <label><input type="radio" name="r" value="Hindi">Hindi</label>
 </div>
-<button class="btn" id="send" type="button">Ipadala ang Sagot</button><p class="note" id="rn" hidden style="margin-top:10px;text-align:center">Pindutin ang “Submit” sa bubukas na form para maipadala ang sagot. Salamat po! 💛</p>
+<button class="btn" id="send" type="button">Ipadala ang Sagot</button><p class="note" id="rn" hidden style="margin-top:10px;text-align:center"></p>
 </section>
 
 <section class="card">
@@ -224,18 +233,24 @@ footer{font-weight:700;color:#2b1608;font-size:clamp(1.15rem,5vw,1.5rem);line-he
 
 <div class="flags" aria-hidden="true" style="border-top:0;border-bottom:3px solid var(--mute);transform:scaleY(-1)"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 <footer>Maraming salamat, at sana’y makita ka namin! 🎉</footer>
+<div class="pop" id="pop" hidden role="alertdialog" aria-modal="true" aria-labelledby="popt"><div class="popbox"><div class="popchk">✓</div><h3 id="popt">Maraming salamat!</h3><p>Natanggap na namin ang iyong kasagutan!</p><button type="button" class="btn" id="popx">Sige po</button></div></div>
 <script>
 (function(){
-var CFG={script:'https://script.google.com/macros/s/AKfycbxH_g_5x1hYFC4TiOXl527e3VJYARoO2ncj8vCm2QONAQAHB17VEPVWd7fbUp2bu5Wk/exec',form:'',name:'',ans:'',sms:'+639170000000'};
-document.getElementById('send').addEventListener('click',function(){
-var el=document.getElementById('nm'),n=el.value.trim();
-if(!n){el.focus();return;}
-var r=document.querySelector('input[name=r]:checked').value,u,web=!!CFG.form;
-if(CFG.script){var b=document.getElementById('send'),rn=document.getElementById('rn');b.disabled=true;fetch(CFG.script,{method:'POST',mode:'no-cors',body:new URLSearchParams({name:n,answer:r})}).then(function(){rn.textContent='Salamat po! Natanggap na namin ang inyong sagot. 💛';rn.hidden=false;}).catch(function(){b.disabled=false;rn.textContent='May problema sa pagpapadala. Pakisubukan ulit.';rn.hidden=false;});return;}.then(function(){rn.textContent='Salamat po! Natanggap na namin ang inyong sagot. 💛';rn.hidden=false;}).catch(function(){b.disabled=false;rn.textContent='May problema sa pagpapadala. Pakisubukan ulit.';rn.hidden=false;});return;}
-if(web){u='https://docs.google.com/forms/d/e/'+CFG.form+'/viewform?usp=pp_url&entry.'+CFG.name+'='+encodeURIComponent(n)+'&entry.'+CFG.ans+'='+encodeURIComponent(r);document.getElementById('rn').hidden=false;}
-else{u='sms:'+CFG.sms+'?&body='+encodeURIComponent('Kylisha’s 1st Birthday – Sagot: '+n+' – '+r);}
-var l=document.createElement('a');l.href=u;if(web){l.target='_blank';l.rel='noopener';}
-document.body.appendChild(l);l.click();l.remove();
+var URL_SHEET='https://script.google.com/macros/s/AKfycbxH_g_5x1hYFC4TiOXl527e3VJYARoO2ncj8vCm2QONAQAHB17VEPVWd7fbUp2bu5Wk/exec';
+var b=document.getElementById('send'),rn=document.getElementById('rn'),pop=document.getElementById('pop'),nm=document.getElementById('nm');
+var ac=null;
+function pop_(){try{var C=window.AudioContext||window.webkitAudioContext;if(!C)return;ac=ac||new C();if(ac.state==='suspended')ac.resume();var t=ac.currentTime,o=ac.createOscillator(),g=ac.createGain();o.type='sine';o.frequency.setValueAtTime(900,t);o.frequency.exponentialRampToValueAtTime(260,t+.12);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.5,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+.18);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+.2);}catch(x){}}
+function show(t){rn.textContent=t;rn.hidden=false;}
+document.getElementById('popx').addEventListener('click',function(){pop.hidden=true;});
+pop.addEventListener('click',function(ev){if(ev.target===pop)pop.hidden=true;});
+b.addEventListener('click',function(){
+var n=nm.value.trim();
+if(!n){nm.focus();return;}
+var r=document.querySelector('input[name=r]:checked').value;
+b.disabled=true;rn.hidden=true;try{var C=window.AudioContext||window.webkitAudioContext;if(C){ac=ac||new C();ac.resume();}}catch(x){}
+fetch(URL_SHEET,{method:'POST',mode:'no-cors',body:new URLSearchParams({name:n,answer:r})})
+.then(function(){pop.hidden=false;pop_();nm.value='';b.disabled=false;})
+.catch(function(){b.disabled=false;show('May problema sa pagpapadala. Pakisubukan ulit.');});
 });
 })();
 </script>
